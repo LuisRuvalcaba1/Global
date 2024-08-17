@@ -40,7 +40,6 @@ def mover_abajo(tablero, filas, columnas):
 
 tablero = iniciarTableroNaves(filas, columnas, naves)
 
-# Mover las naves hacia abajo
 for _ in range(8):
     os.system('cls' if os.name == 'nt' else 'clear') 
     imprimirtablero(tablero)
