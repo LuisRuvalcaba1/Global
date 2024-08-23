@@ -7,8 +7,22 @@
 #define columnas 60
 #define filas 10
 
-char iniciar_tablero(char tablero[filas][columnas])
+void GoToXY(int column, int line)
 {
+    COORD coord;
+    coord.X = column;
+    coord.Y = line;
+
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    if (!SetConsoleCursorPosition(hConsole, coord))
+    {
+    }
+}
+
+void iniciar_tablero(char tablero[filas][columnas])
+{
+
     for (int i = 0; i < filas; i++)
     {
         for (int j = 0; j < columnas; j++)
@@ -18,12 +32,8 @@ char iniciar_tablero(char tablero[filas][columnas])
     }
 }
 
-void imprimir_tablero(char tablero[filas][columnas], int fila)
+void imprimir_tablero(char tablero[filas][columnas])
 {
-    for (int i = 0; i < fila; i++)
-    {
-        printf("\n");
-    }
     for (int i = 0; i < filas; i++)
     {
         for (int j = 0; j < columnas; j++)
@@ -34,59 +44,89 @@ void imprimir_tablero(char tablero[filas][columnas], int fila)
     }
 }
 
-char iniciar_naves(char tablero[filas][columnas])
+void iniciar_naves(char tablero[filas][columnas], int fila)
 {
+    char tablero2[filas][columnas];
     for (int i = 0; i < 6; i++)
     {
-        tablero[0][i * 5] = ' ';
-        tablero[0][(i * 5) + 1] = '*';
-        tablero[0][(i * 5) + 2] = ' ';
-        tablero[0][(i * 5) + 3] = '*';
-        tablero[0][(i * 5) + 4] = ' ';
+        int col = i * 5;
+        if (fila > 0)
+        {
+            for (int j = 0; j < 60; j++)
+            {
+                tablero[fila - 1][j] = ' ';
+            }
+            tablero[fila][col] = ' ';
+            tablero[fila][col + 1] = '*';
+            tablero[fila][col + 2] = ' ';
+            tablero[fila][col + 3] = '*';
+            tablero[fila][col + 4] = ' ';
 
-        tablero[1][i * 5] = ' ';
-        tablero[1][(i * 5) + 1] = ' ';
-        tablero[1][(i * 5) + 2] = '*';
-        tablero[1][(i * 5) + 3] = ' ';
-        tablero[1][(i * 5) + 4] = ' ';
+            tablero[fila + 1][col] = ' ';
+            tablero[fila + 1][col + 1] = ' ';
+            tablero[fila + 1][col + 2] = '*';
+            tablero[fila + 1][col + 3] = ' ';
+            tablero[fila + 1][col + 4] = ' ';
+        }
+        else
+        {
+
+            tablero[fila][col] = ' ';
+            tablero[fila][col + 1] = '*';
+            tablero[fila][col + 2] = ' ';
+            tablero[fila][col + 3] = '*';
+            tablero[fila][col + 4] = ' ';
+
+            tablero[fila + 1][col] = ' ';
+            tablero[fila + 1][col + 1] = ' ';
+            tablero[fila + 1][col + 2] = '*';
+            tablero[fila + 1][col + 3] = ' ';
+            tablero[fila + 1][col + 4] = ' ';
+        }
     }
 }
 
-// void mover_naves(char tablero[filas][columnas])
-// {
-//     for (int i = 1; i > 0; i--)
-//     {
-//         for (int j = 0; j < 60; j++)
-//         {
-//             if (tablero[-1][j == '*'] || tablero[-1][j == ' '])
-//             {
-//                 tablero[i][j] = tablero[i - 1][j];
-//                 tablero[i - 1][j] = ' ';
-//             }
-//         }
-//     }
-// }
+void imprimir_fila(char tablero[filas][columnas], int fila)
+{
+    GoToXY(0, fila);
+    for (int j = 0; j < columnas; j++)
+    {
+        printf("%c", tablero[fila][j]);
+    }
+    printf("\n");
+}
+
+void borrar_pantalla()
+{
+    system("cls");
+}
 
 int main()
 {
     char tablero[filas][columnas];
     int fila = 0;
     iniciar_tablero(tablero);
-    iniciar_naves(tablero);
-    // imprimir_tablero(tablero);
 
-    for (int tick = 0; tick < filas; tick++)
+    for (int i = 0; i < filas; i++)
     {
-        system("cls");
-        imprimir_tablero(tablero, fila);
-        Sleep(500);
-        fila--;
-
-        if (fila < 0)
-        {
-            fila = filas - 2; 
-        }
+        imprimir_fila(tablero, i);
     }
+
+    do
+    {
+        iniciar_naves(tablero, fila);
+        
+        if (fila > 0)
+        {
+            imprimir_fila(tablero, fila - 1);
+        }
+        imprimir_fila(tablero, fila);
+        imprimir_fila(tablero, fila + 1);
+
+        Sleep(1000);
+        fila++;
+
+    } while (fila <= 8);
 
     return 0;
 }
